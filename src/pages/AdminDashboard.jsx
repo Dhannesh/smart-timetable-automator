@@ -5,6 +5,8 @@ import {
   getAllSections,
 } from "../services/timetableService.js";
 import TimetableGrid from "../components/TimetableGrid.jsx";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 
 export default function AdminDashboard() {
   const [sections, setSections] = useState([]);
@@ -53,53 +55,56 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="min-h-screen bg-slate-900 text-white p-8 flex flex-col">
+      <div className="flex-1">
+        <Navbar title="Admin Dashboard" />
 
-      <div className="flex items-center gap-4 mb-6">
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg transition-colors"
-        >
-          {generating ? "Generating..." : "Generate Timetable"}
-        </button>
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg transition-colors"
+          >
+            {generating ? "Generating..." : "Generate Timetable"}
+          </button>
 
-        <select
-          value={selectedSectionId}
-          onChange={(e) => setSelectedSectionId(e.target.value)}
-          className="bg-slate-800 border border-slate-700 text-white px-3 py-2 rounded-lg"
-        >
-          {sections.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.year} - Section {s.section_label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {message && (
-        <div
-          className={`mb-6 p-3 rounded-lg text-sm ${
-            message.type === "error"
-              ? "bg-red-900/50 text-red-300 border border-red-700"
-              : "bg-emerald-900/50 text-emerald-300 border border-emerald-700"
-          }`}
-        >
-          {message.text}
+          <select
+            value={selectedSectionId}
+            onChange={(e) => setSelectedSectionId(e.target.value)}
+            className="bg-slate-800 border border-slate-700 text-white px-3 py-2 rounded-lg"
+          >
+            {sections.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.year} - Section {s.section_label}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
 
-      <div className="bg-slate-800/50 rounded-lg p-4">
-        {loadingGrid ? (
-          <div className="text-slate-400 p-4">Loading timetable...</div>
-        ) : (
-          <TimetableGrid
-            slots={slots}
-            emptyMessage="No timetable generated yet. Click 'Generate Timetable' above."
-          />
+        {message && (
+          <div
+            className={`mb-6 p-3 rounded-lg text-sm ${
+              message.type === "error"
+                ? "bg-red-900/50 text-red-300 border border-red-700"
+                : "bg-emerald-900/50 text-emerald-300 border border-emerald-700"
+            }`}
+          >
+            {message.text}
+          </div>
         )}
+
+        <div className="bg-slate-800/50 rounded-lg p-4">
+          {loadingGrid ? (
+            <div className="text-slate-400 p-4">Loading timetable...</div>
+          ) : (
+            <TimetableGrid
+              slots={slots}
+              emptyMessage="No timetable generated yet. Click 'Generate Timetable' above."
+            />
+          )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }
