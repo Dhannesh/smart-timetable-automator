@@ -1,24 +1,36 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./services/supabaseClient";
+import { useState } from "react";
+import {
+  parseAbsenceRequest,
+  validateAbsenceAction,
+} from "./services/agentService.js";
 
 function App() {
-  const [status, setStatus] = useState("Checking connection...");
+  const [result, setResult] = useState("Click the button to test");
 
-  useEffect(() => {
-    async function checkConnection() {
-      const { error } = await supabase.from("faculty").select("*").limit(1);
-      if (error) {
-        setStatus(`Connection error: ${error.message}`);
-      } else {
-        setStatus("✅ Supabase connected successfully!");
-      }
+  async function runTest() {
+    setResult("Thinking...");
+    try {
+      const parsed = await parseAbsenceRequest(
+        "Dr. Sharma is absent Monday period 1",
+      );
+      const validated = await validateAbsenceAction(parsed);
+      setResult(JSON.stringify(validated, null, 2));
+    } catch (err) {
+      setResult("ERROR: " + err.message);
     }
-    checkConnection();
-  }, []);
+  }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <h1 className="text-2xl font-bold text-white">{status}</h1>
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center gap-4 p-8">
+      <button
+        onClick={runTest}
+        className="bg-emerald-600 text-white px-4 py-2 rounded-lg"
+      >
+        Test Agent Parsing
+      </button>
+      <pre className="text-white text-sm bg-slate-800 p-4 rounded-lg max-w-xl overflow-auto">
+        {result}
+      </pre>
     </div>
   );
 }

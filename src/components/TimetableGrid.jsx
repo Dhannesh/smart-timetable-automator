@@ -1,12 +1,29 @@
 const DAY_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const PERIODS = [1, 2, 3, 4, 5, 6, 7, 8];
 
+const PERIOD_TIMES = {
+  1: "8:50 - 9:40",
+  2: "9:40 - 10:30",
+  3: "10:40 - 11:30",
+  4: "11:30 - 12:20",
+  5: "1:10 - 2:00",
+  6: "2:00 - 2:50",
+  7: "2:50 - 3:40",
+  8: "3:40 - 4:30",
+};
+
 export default function TimetableGrid({
   slots,
   emptyMessage = "No timetable data yet.",
+  highlightSlotId = null,
 }) {
   if (!slots || slots.length === 0) {
-    return <div className="text-slate-400 text-sm p-4">{emptyMessage}</div>;
+    return (
+      <div className="text-slate-400 text-sm p-8 text-center border border-dashed border-slate-700 rounded-lg">
+        <div className="text-3xl mb-2">🗓️</div>
+        {emptyMessage}
+      </div>
+    );
   }
 
   const grid = {};
@@ -23,52 +40,63 @@ export default function TimetableGrid({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-lg border border-slate-700">
       <table className="min-w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="border border-slate-700 bg-slate-800 text-slate-300 p-2 text-left">
-              Period
+            <th className="border-b border-r border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold sticky left-0 z-10">
+              Day
             </th>
-            {DAY_LABELS.map((label) => (
+            {PERIODS.map((period) => (
               <th
-                key={label}
-                className="border border-slate-700 bg-slate-800 text-slate-300 p-2 text-left"
+                key={period}
+                className="border-b border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold min-w-[140px]"
               >
-                {label}
+                <div>Period {period}</div>
+                <div className="text-slate-500 text-xs font-normal mt-0.5">
+                  {PERIOD_TIMES[period]}
+                </div>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {PERIODS.map((period) => (
-            <tr key={period}>
-              <td className="border border-slate-700 bg-slate-800 text-slate-300 p-2 font-semibold">
-                {period}
+          {[0, 1, 2, 3, 4].map((day, rowIdx) => (
+            <tr
+              key={day}
+              className={rowIdx % 2 === 0 ? "bg-slate-900" : "bg-slate-900/60"}
+            >
+              <td className="border-r border-slate-700 bg-slate-800 text-slate-300 p-3 font-semibold sticky left-0">
+                {DAY_LABELS[day]}
               </td>
-              {[0, 1, 2, 3, 4].map((day) => {
+              {PERIODS.map((period) => {
                 const slot = grid[day][period];
+                const isHighlighted = slot && slot.id === highlightSlotId;
                 return (
                   <td
-                    key={day}
-                    className="border border-slate-700 p-2 align-top"
+                    key={period}
+                    className={`p-3 align-top transition-colors duration-500 ${
+                      isHighlighted
+                        ? "bg-emerald-900/40 ring-1 ring-inset ring-emerald-500"
+                        : "hover:bg-slate-800/50"
+                    }`}
                   >
                     {slot ? (
                       <div>
-                        <div className="text-white font-medium">
+                        <div className="text-white font-medium leading-tight">
                           {slot.subjectName}
                         </div>
-                        <div className="text-slate-400 text-xs">
+                        <div className="text-slate-400 text-xs mt-0.5">
                           {slot.facultyName || slot.sectionLabel}
                         </div>
                         {slot.roomName && (
-                          <div className="text-slate-500 text-xs">
-                            {slot.roomName}
+                          <div className="text-slate-500 text-xs mt-0.5">
+                            📍 {slot.roomName}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <span className="text-slate-600">—</span>
+                      <span className="text-slate-700">—</span>
                     )}
                   </td>
                 );
