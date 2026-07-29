@@ -19,8 +19,12 @@ const DAY_NAME_TO_INDEX = {
   fri: 4,
 };
 
+const DAY_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
 /**
  * Sends the admin's plain-English request to Groq (Llama 3.3) and returns a structured action.
+ * Only used for genuinely free-typed messages — NOT for leave-request-triggered resolutions,
+ * which have exact structured data already and should skip the LLM (see validateAbsenceActionDirect).
  */
 export async function parseAbsenceRequest(message) {
   if (!GROQ_API_KEY) {
@@ -104,8 +108,8 @@ If the message doesn't clearly contain a faculty name, a day, and a period numbe
 }
 
 /**
- * Validates the parsed action against real data: does this faculty exist,
- * and do they actually have a slot at this day/period?
+ * Validates a parsed (LLM-derived) action against real data: fuzzy-matches the faculty name,
+ * confirms they have an actual slot at that day/period. Used for manually-typed requests.
  */
 export async function validateAbsenceAction({
   facultyNameRaw,
@@ -136,8 +140,25 @@ export async function validateAbsenceAction({
     );
   }
 
-  const faculty = matches[0];
+  return validateAbsenceActionDirect({
+    facultyId: matches[0].id,
+    facultyName: matches[0].name,
+    dayIndex,
+    period,
+  });
+}
 
+/**
+ * Validates a KNOWN, exact absence action (facultyId already known — no name matching, no LLM
+ * involved). Used when resolving a leave request, where we already have the faculty's ID directly
+ * from the database, not from free-text parsing. This is the safe, deterministic path.
+ */
+export async function validateAbsenceActionDirect({
+  facultyId,
+  facultyName,
+  dayIndex,
+  period,
+}) {
   const { data: slotMatches, error: slotError } = await supabase
     .from("timetable_slots")
     .select(
@@ -147,7 +168,7 @@ export async function validateAbsenceAction({
       subject_offering:subject_offering_id ( subject:subject_id ( name ) )
     `,
     )
-    .eq("faculty_id", faculty.id)
+    .eq("faculty_id", facultyId)
     .eq("day_of_week", dayIndex)
     .eq("period_number", period);
 
@@ -155,9 +176,8 @@ export async function validateAbsenceAction({
     throw new Error(`Failed to check timetable: ${slotError.message}`);
 
   if (!slotMatches || slotMatches.length === 0) {
-    const DAY_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     throw new Error(
-      `${faculty.name} has no class scheduled at ${DAY_LABELS[dayIndex]} period ${period}. Nothing to reassign.`,
+      `${facultyName} has no class scheduled at ${DAY_LABELS[dayIndex]} period ${period}. It may have already been reassigned.`,
     );
   }
 
@@ -165,8 +185,8 @@ export async function validateAbsenceAction({
 
   return {
     slotId: slot.id,
-    facultyId: faculty.id,
-    facultyName: faculty.name,
+    facultyId,
+    facultyName,
     dayIndex,
     period,
     sectionLabel: `${slot.section.year} - ${slot.section.section_label}`,

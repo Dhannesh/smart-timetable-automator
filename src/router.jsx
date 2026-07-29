@@ -4,6 +4,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import FacultyLogin from "./pages/FacultyLogin";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import StudentView from "./pages/StudentView";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 
 export const router = createBrowserRouter([
@@ -27,4 +28,5 @@ export const router = createBrowserRouter([
     ),
   },
   { path: "/student", element: <StudentView /> },
+  { path: "*", element: <NotFound /> },
 ]);

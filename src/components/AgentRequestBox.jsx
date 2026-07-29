@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   parseAbsenceRequest,
   validateAbsenceAction,
+  validateAbsenceActionDirect,
 } from "../services/agentService.js";
 import {
   findSubstituteCandidates,
@@ -31,16 +32,53 @@ export default function AgentRequestBox({
       initialContext.leaveRequestId !== lastHandledContextId.current
     ) {
       lastHandledContextId.current = initialContext.leaveRequestId;
-      const prefilledMessage = `${initialContext.facultyName} is absent ${initialContext.dayLabel} period ${initialContext.period}`;
-      setMessage(prefilledMessage);
+      setMessage(
+        `${initialContext.facultyName} — ${initialContext.dayLabel} period ${initialContext.period} (from leave request)`,
+      );
       setRelatedLeaveRequestId(initialContext.leaveRequestId);
-      runAgent(prefilledMessage);
+      // Skip the LLM entirely — we already have exact facultyId/day/period from the database.
+      runAgentDirect({
+        facultyId: initialContext.facultyId,
+        facultyName: initialContext.facultyName,
+        dayIndex: initialContext.dayIndex,
+        period: initialContext.period,
+      });
       if (onInitialContextConsumed) onInitialContextConsumed();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialContext]);
 
-  async function runAgent(text) {
+  async function runAgentDirect({ facultyId, facultyName, dayIndex, period }) {
+    setError(null);
+    setStage("thinking");
+    try {
+      const action = await validateAbsenceActionDirect({
+        facultyId,
+        facultyName,
+        dayIndex,
+        period,
+      });
+      const substitute = await findSubstituteCandidates({
+        dayIndex: action.dayIndex,
+        period: action.period,
+        excludeFacultyId: action.facultyId,
+      });
+
+      if (!substitute.proposedFacultyId) {
+        setError(substitute.reason);
+        setStage("idle");
+        return;
+      }
+
+      setProposal({ action, substitute });
+      setStage("confirming");
+    } catch (err) {
+      setError(err.message);
+      setStage("idle");
+    }
+  }
+
+  async function runAgentFromText(text) {
     setError(null);
     setStage("thinking");
     try {
@@ -69,7 +107,7 @@ export default function AgentRequestBox({
   function handleSubmit(e) {
     e.preventDefault();
     setRelatedLeaveRequestId(null);
-    runAgent(message);
+    runAgentFromText(message);
   }
 
   async function handleConfirm() {
@@ -148,7 +186,8 @@ export default function AgentRequestBox({
 
       {relatedLeaveRequestId && stage !== "idle" && (
         <div className="text-amber-400 text-xs mb-3">
-          📋 Resolving a pending leave request
+          📋 Resolving a pending leave request (verified directly, no AI parsing
+          needed)
         </div>
       )}
 
