@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   parseAbsenceRequest,
   validateAbsenceAction,
@@ -7,21 +7,44 @@ import {
   findSubstituteCandidates,
   confirmReassignment,
 } from "../services/substituteService.js";
+import { markLeaveRequestHandled } from "../services/leaveService.js";
+import { useAuth } from "../auth/AuthContext.jsx";
 
 const DAY_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
-export default function AgentRequestBox({ onReassignmentComplete }) {
+export default function AgentRequestBox({
+  onReassignmentComplete,
+  initialContext,
+  onInitialContextConsumed,
+}) {
+  const { adminId } = useAuth();
   const [message, setMessage] = useState("");
   const [stage, setStage] = useState("idle");
   const [error, setError] = useState(null);
   const [proposal, setProposal] = useState(null);
+  const [relatedLeaveRequestId, setRelatedLeaveRequestId] = useState(null);
+  const lastHandledContextId = useRef(null);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  useEffect(() => {
+    if (
+      initialContext &&
+      initialContext.leaveRequestId !== lastHandledContextId.current
+    ) {
+      lastHandledContextId.current = initialContext.leaveRequestId;
+      const prefilledMessage = `${initialContext.facultyName} is absent ${initialContext.dayLabel} period ${initialContext.period}`;
+      setMessage(prefilledMessage);
+      setRelatedLeaveRequestId(initialContext.leaveRequestId);
+      runAgent(prefilledMessage);
+      if (onInitialContextConsumed) onInitialContextConsumed();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialContext]);
+
+  async function runAgent(text) {
     setError(null);
     setStage("thinking");
     try {
-      const parsed = await parseAbsenceRequest(message);
+      const parsed = await parseAbsenceRequest(text);
       const action = await validateAbsenceAction(parsed);
       const substitute = await findSubstituteCandidates({
         dayIndex: action.dayIndex,
@@ -43,6 +66,12 @@ export default function AgentRequestBox({ onReassignmentComplete }) {
     }
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    setRelatedLeaveRequestId(null);
+    runAgent(message);
+  }
+
   async function handleConfirm() {
     setStage("applying");
     try {
@@ -50,6 +79,11 @@ export default function AgentRequestBox({ onReassignmentComplete }) {
         slotId: proposal.action.slotId,
         newFacultyId: proposal.substitute.proposedFacultyId,
       });
+
+      if (relatedLeaveRequestId && adminId) {
+        await markLeaveRequestHandled(relatedLeaveRequestId, adminId);
+      }
+
       setStage("done");
       setMessage("");
       if (onReassignmentComplete)
@@ -57,6 +91,7 @@ export default function AgentRequestBox({ onReassignmentComplete }) {
       setTimeout(() => {
         setStage("idle");
         setProposal(null);
+        setRelatedLeaveRequestId(null);
       }, 3000);
     } catch (err) {
       setError(err.message);
@@ -67,6 +102,7 @@ export default function AgentRequestBox({ onReassignmentComplete }) {
   function handleCancel() {
     setProposal(null);
     setStage("idle");
+    setRelatedLeaveRequestId(null);
   }
 
   return (
@@ -109,6 +145,12 @@ export default function AgentRequestBox({ onReassignmentComplete }) {
           )}
         </button>
       </form>
+
+      {relatedLeaveRequestId && stage !== "idle" && (
+        <div className="text-amber-400 text-xs mb-3">
+          📋 Resolving a pending leave request
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-900/50 border border-red-700 text-red-300 text-sm p-3 rounded-lg mb-3 animate-[fadeIn_0.2s_ease-in]">

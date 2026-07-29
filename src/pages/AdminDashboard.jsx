@@ -4,10 +4,12 @@ import {
   getSectionTimetable,
   getAllSections,
 } from "../services/timetableService.js";
+import { getPendingLeaveRequests } from "../services/leaveService.js";
 import TimetableGrid from "../components/TimetableGrid.jsx";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import AgentRequestBox from "../components/AgentRequestBox.jsx";
+import LeaveRequestsList from "../components/LeaveRequestsList.jsx";
 
 export default function AdminDashboard() {
   const [sections, setSections] = useState([]);
@@ -18,6 +20,10 @@ export default function AdminDashboard() {
   const [loadingGrid, setLoadingGrid] = useState(false);
   const [highlightSlotId, setHighlightSlotId] = useState(null);
 
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [loadingLeaveRequests, setLoadingLeaveRequests] = useState(false);
+  const [agentInitialContext, setAgentInitialContext] = useState(null);
+
   useEffect(() => {
     getAllSections()
       .then((data) => {
@@ -25,6 +31,7 @@ export default function AdminDashboard() {
         if (data.length > 0) setSelectedSectionId(data[0].id);
       })
       .catch((err) => setMessage({ type: "error", text: err.message }));
+    refreshLeaveRequests();
   }, []);
 
   async function refreshGrid() {
@@ -37,6 +44,18 @@ export default function AdminDashboard() {
       setMessage({ type: "error", text: err.message });
     } finally {
       setLoadingGrid(false);
+    }
+  }
+
+  async function refreshLeaveRequests() {
+    setLoadingLeaveRequests(true);
+    try {
+      const data = await getPendingLeaveRequests();
+      setLeaveRequests(data);
+    } catch (err) {
+      console.error("Failed to load leave requests:", err.message);
+    } finally {
+      setLoadingLeaveRequests(false);
     }
   }
 
@@ -64,8 +83,21 @@ export default function AdminDashboard() {
 
   async function handleReassignmentComplete(changedSlotId) {
     await refreshGrid();
+    await refreshLeaveRequests();
     setHighlightSlotId(changedSlotId);
     setTimeout(() => setHighlightSlotId(null), 4000);
+  }
+
+  function handleResolveClick(leaveRequest) {
+    setAgentInitialContext({
+      facultyName: leaveRequest.facultyName,
+      dayLabel: leaveRequest.dayLabel,
+      period: leaveRequest.period,
+      leaveRequestId: leaveRequest.id,
+    });
+    document
+      .getElementById("agent-request-box")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   return (
@@ -129,7 +161,21 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <AgentRequestBox onReassignmentComplete={handleReassignmentComplete} />
+        <div className="mb-6">
+          <LeaveRequestsList
+            requests={leaveRequests}
+            loading={loadingLeaveRequests}
+            onResolveClick={handleResolveClick}
+          />
+        </div>
+
+        <div id="agent-request-box">
+          <AgentRequestBox
+            onReassignmentComplete={handleReassignmentComplete}
+            initialContext={agentInitialContext}
+            onInitialContextConsumed={() => setAgentInitialContext(null)}
+          />
+        </div>
       </div>
       <Footer />
     </div>

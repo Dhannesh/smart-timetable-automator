@@ -8,13 +8,15 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(null); // 'admin' | 'faculty' | null
   const [facultyId, setFacultyId] = useState(null);
   const [facultyName, setFacultyName] = useState(null);
-  const [loading, setLoading] = useState(true); // true until BOTH session and role are resolved
+  const [adminId, setAdminId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   async function resolveRole(currentSession) {
     if (!currentSession) {
       setRole(null);
       setFacultyId(null);
       setFacultyName(null);
+      setAdminId(null);
       return;
     }
 
@@ -30,6 +32,7 @@ export function AuthProvider({ children }) {
       setRole("admin");
       setFacultyId(null);
       setFacultyName(adminRow.name);
+      setAdminId(adminRow.id);
       return;
     }
 
@@ -43,12 +46,14 @@ export function AuthProvider({ children }) {
       setRole("faculty");
       setFacultyId(facultyRow.id);
       setFacultyName(facultyRow.name);
+      setAdminId(null);
       return;
     }
 
     setRole(null);
     setFacultyId(null);
     setFacultyName(null);
+    setAdminId(null);
   }
 
   useEffect(() => {
@@ -66,7 +71,7 @@ export function AuthProvider({ children }) {
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, currentSession) => {
         if (!isMounted) return;
-        setLoading(true); // pause any protected route decisions while we re-resolve
+        setLoading(true);
         setSession(currentSession);
         await resolveRole(currentSession);
         if (isMounted) setLoading(false);
@@ -97,6 +102,7 @@ export function AuthProvider({ children }) {
     role,
     facultyId,
     facultyName,
+    adminId,
     loading,
     loginWithPassword,
     logout,
