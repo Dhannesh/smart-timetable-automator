@@ -40,71 +40,78 @@ export default function TimetableGrid({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-700">
-      <table className="min-w-full border-collapse text-sm">
-        <thead>
-          <tr>
-            <th className="border-b border-r border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold sticky left-0 z-10">
-              Day
-            </th>
-            {PERIODS.map((period) => (
-              <th
-                key={period}
-                className="border-b border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold min-w-[140px]"
-              >
-                <div>Period {period}</div>
-                <div className="text-slate-500 text-xs font-normal mt-0.5">
-                  {PERIOD_TIMES[period]}
-                </div>
+    <div>
+      <div className="sm:hidden text-slate-500 text-xs mb-2 flex items-center gap-1">
+        <span>↔️</span> Scroll sideways to see all periods
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-slate-700">
+        <table className="min-w-full border-collapse text-sm">
+          <thead>
+            <tr>
+              <th className="border-b border-r border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold sticky left-0 z-10">
+                Day
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {[0, 1, 2, 3, 4].map((day, rowIdx) => (
-            <tr
-              key={day}
-              className={rowIdx % 2 === 0 ? "bg-slate-900" : "bg-slate-900/60"}
-            >
-              <td className="border-r border-slate-700 bg-slate-800 text-slate-300 p-3 font-semibold sticky left-0">
-                {DAY_LABELS[day]}
-              </td>
-              {PERIODS.map((period) => {
-                const slot = grid[day][period];
-                const isHighlighted = slot && slot.id === highlightSlotId;
-                return (
-                  <td
-                    key={period}
-                    className={`p-3 align-top transition-colors duration-500 ${
-                      isHighlighted
-                        ? "bg-emerald-900/40 ring-1 ring-inset ring-emerald-500"
-                        : "hover:bg-slate-800/50"
-                    }`}
-                  >
-                    {slot ? (
-                      <div>
-                        <div className="text-white font-medium leading-tight">
-                          {slot.subjectName}
-                        </div>
-                        <div className="text-slate-400 text-xs mt-0.5">
-                          {slot.facultyName || slot.sectionLabel}
-                        </div>
-                        {slot.roomName && (
-                          <div className="text-slate-500 text-xs mt-0.5">
-                            📍 {slot.roomName}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-slate-700">—</span>
-                    )}
-                  </td>
-                );
-              })}
+              {PERIODS.map((period) => (
+                <th
+                  key={period}
+                  className="border-b border-slate-700 bg-slate-800 text-slate-300 p-3 text-left font-semibold min-w-[140px]"
+                >
+                  <div>Period {period}</div>
+                  <div className="text-slate-500 text-xs font-normal mt-0.5">
+                    {PERIOD_TIMES[period]}
+                  </div>
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {[0, 1, 2, 3, 4].map((day, rowIdx) => (
+              <tr
+                key={day}
+                className={
+                  rowIdx % 2 === 0 ? "bg-slate-900" : "bg-slate-900/60"
+                }
+              >
+                <td className="border-r border-slate-700 bg-slate-800 text-slate-300 p-3 font-semibold sticky left-0">
+                  {DAY_LABELS[day]}
+                </td>
+                {PERIODS.map((period) => {
+                  const slot = grid[day][period];
+                  const isHighlighted = slot && slot.id === highlightSlotId;
+                  return (
+                    <td
+                      key={period}
+                      className={`p-3 align-top transition-colors duration-500 ${
+                        isHighlighted
+                          ? "bg-emerald-900/40 ring-1 ring-inset ring-emerald-500"
+                          : "hover:bg-slate-800/50"
+                      }`}
+                    >
+                      {slot ? (
+                        <div>
+                          <div className="text-white font-medium leading-tight">
+                            {slot.subjectName}
+                          </div>
+                          <div className="text-slate-400 text-xs mt-0.5">
+                            {slot.facultyName || slot.sectionLabel}
+                          </div>
+                          {slot.roomName && (
+                            <div className="text-slate-500 text-xs mt-0.5">
+                              📍 {slot.roomName}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-slate-700">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
