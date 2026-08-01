@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Certificate of Completion — Smart Timetable Automator</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #0B1120;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .certificate {
+    width: 1100px;
+    max-width: 100%;
+    background: #0F172A;
+    border: 2px solid #10B981;
+    border-radius: 4px;
+    position: relative;
+    padding: 64px 72px;
+    color: #E5EAF3;
+    overflow: hidden;
+  }
+  .certificate::before {
+    content: '';
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .corner-mark {
+    position: absolute; width: 60px; height: 60px;
+    border: 2px solid #10B981; opacity: 0.6;
+  }
+  .corner-mark.tl { top: 22px; left: 22px; border-right: none; border-bottom: none; }
+  .corner-mark.tr { top: 22px; right: 22px; border-left: none; border-bottom: none; }
+  .corner-mark.bl { bottom: 22px; left: 22px; border-right: none; border-top: none; }
+  .corner-mark.br { bottom: 22px; right: 22px; border-left: none; border-top: none; }
+
+  .brand-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px; }
+  .brand { font-weight: 700; letter-spacing: 0.08em; font-size: 14px; color: #10B981; text-transform: uppercase; }
+  .date { font-size: 12px; color: #8A97AE; }
+
+  .eyebrow { text-align: center; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #F59E0B; font-weight: 700; margin-bottom: 14px; }
+  h1 {
+    text-align: center;
+    font-family: Cambria, Georgia, serif;
+    font-size: 40px; font-weight: 700; margin: 0 0 8px;
+    color: #FFFFFF;
+  }
+  .subtitle { text-align: center; color: #8A97AE; font-size: 15px; margin-bottom: 40px; }
+
+  .recipient { text-align: center; margin-bottom: 8px; }
+  .recipient .label { font-size: 12px; color: #8A97AE; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .recipient .name {
+    font-family: Cambria, Georgia, serif;
+    font-size: 34px; font-weight: 700; color: #10B981;
+    border-bottom: 2px solid #24314B; display: inline-block; padding: 0 24px 10px;
+  }
+
+  .body-text { text-align: center; max-width: 720px; margin: 32px auto 0; color: #C7D2E8; font-size: 15px; line-height: 1.7; }
+  .project-name { color: #FFFFFF; font-weight: 700; }
+  .version-badge {
+    display: inline-block; background: rgba(16,185,129,0.15); color: #10B981;
+    border: 1px solid #10B981; border-radius: 20px; padding: 3px 14px; font-size: 12px; font-weight: 700;
+    margin: 0 4px;
+  }
+
+  .footer-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 56px; padding-top: 28px; border-top: 1px solid #24314B;
+  }
+  .signature-block { text-align: center; }
+  .signature-line { width: 200px; border-bottom: 1px solid #4A5872; margin-bottom: 8px; height: 30px; display: flex; align-items: flex-end; justify-content: center; }
+  .signature-name { font-family: 'Brush Script MT', cursive; font-size: 22px; color: #10B981; }
+  .signature-label { font-size: 11px; color: #8A97AE; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .links { text-align: center; font-size: 12px; color: #8A97AE; }
+  .links a { color: #10B981; text-decoration: none; margin: 0 8px; }
+
+  .mentor-credit {
+    text-align: center; font-size: 12px; color: #8A97AE; margin-top: 18px; font-style: italic;
+  }
+
+  @media print {
+    body { background: #0B1120 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .certificate { border-radius: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="certificate">
+    <div class="corner-mark tl"></div>
+    <div class="corner-mark tr"></div>
+    <div class="corner-mark bl"></div>
+    <div class="corner-mark br"></div>
+
+    <div class="brand-row">
+      <div class="brand">AB Talks</div>
+      <div class="date">Issued: August 1, 2026</div>
+    </div>
+
+    <div class="eyebrow">Certificate of Completion</div>
+    <h1>10-Day Capstone Sprint</h1>
+    <div class="subtitle">AB Talks 60-Day Claude AI Mastery Challenge</div>
+
+    <div class="recipient">
+      <div class="label">This certifies that</div>
+      <div class="name">Dhaneshwar Kumar</div>
+    </div>
+
+    <div class="body-text">
+      has successfully designed, built, tested, and publicly deployed
+      <span class="project-name">Smart Timetable Automator</span>
+      <span class="version-badge">v1.0.0</span>
+      — a rule-based college timetable auto-generation engine paired with an AI-powered reassignment agent —
+      completed through a structured 10-day Software Development Lifecycle sprint, from requirements gathering
+      to a production-ready public release, as the final practical milestone of the AB Talks 60-Day Claude AI Mastery Challenge.
+    </div>
+
+    <div class="mentor-credit">Built with Claude (free tier) as AI pair programmer and project mentor throughout the sprint.</div>
+
+    <div class="footer-row">
+      <div class="signature-block">
+        <div class="signature-line"><span class="signature-name">AB Talks</span></div>
+        <div class="signature-label">Program &middot; ABTalks.in</div>
+      </div>
+
+      <div class="links">
+        <a href="https://www.abtalks.in/">abtalks.in</a> &middot;
+        <a href="https://www.linkedin.com/company/abtalks-on-ai/">LinkedIn: ABTalks on AI</a>
+      </div>
+
+      <div class="signature-block">
+        <div class="signature-line"><span class="signature-name">Claude</span></div>
+        <div class="signature-label">AI Pair Programmer</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

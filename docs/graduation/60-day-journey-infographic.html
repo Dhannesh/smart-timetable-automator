@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>60-Day Journey — Smart Timetable Automator</title>
+<style>
+  :root {
+    --navy: #0B1120;
+    --panel: #131C2E;
+    --panel-2: #1B2740;
+    --emerald: #10B981;
+    --emerald-dim: #0d9668;
+    --amber: #F59E0B;
+    --text: #E5EAF3;
+    --muted: #8A97AE;
+    --line: #24314B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 56px 32px 80px; }
+  header { text-align: center; margin-bottom: 56px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--emerald); font-weight: 700; margin-bottom: 14px;
+  }
+  h1 {
+    font-family: Cambria, Georgia, serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700; margin: 0 0 12px;
+    line-height: 1.15;
+  }
+  .sub { color: var(--muted); font-size: 16px; max-width: 620px; margin: 0 auto; }
+
+  /* Signature element: a "timetable grid" of the 60-day journey — 8 weeks as rows, 5 build-phases as columns */
+  .grid-signature {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 48px 0 64px;
+  }
+  .grid-signature table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .grid-signature th {
+    background: var(--panel-2); color: var(--muted); text-align: left;
+    padding: 12px 14px; font-weight: 600; border-bottom: 1px solid var(--line);
+  }
+  .grid-signature td {
+    padding: 14px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .grid-signature tr:last-child td { border-bottom: none; }
+  .grid-signature td:first-child, .grid-signature th:first-child {
+    background: var(--panel-2); font-weight: 700; color: var(--text); white-space: nowrap;
+  }
+  .cell-title { color: var(--text); font-weight: 600; margin-bottom: 3px; }
+  .cell-sub { color: var(--muted); font-size: 12px; }
+  .cell-fill { background: rgba(16,185,129,0.08); }
+  .cell-capstone { background: rgba(245,158,11,0.12); }
+
+  h2 {
+    font-family: Cambria, Georgia, serif;
+    font-size: 26px; font-weight: 700; margin: 0 0 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2::before { content: ''; width: 6px; height: 26px; background: var(--emerald); border-radius: 3px; display: inline-block; }
+
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 64px;
+  }
+  @media (max-width: 760px) { .skills-grid { grid-template-columns: 1fr; } }
+  .skill-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px;
+  }
+  .skill-card .icon { font-size: 22px; margin-bottom: 10px; }
+  .skill-card .name { font-weight: 700; margin-bottom: 6px; }
+  .skill-card .desc { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+  .capstone-panel {
+    background: linear-gradient(135deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--emerald-dim);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+  }
+  .capstone-panel h2::before { background: var(--amber); }
+  .stat-row { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 24px; }
+  .stat { min-width: 140px; }
+  .stat .num { font-family: Cambria, Georgia, serif; font-size: 34px; font-weight: 700; color: var(--emerald); }
+  .stat .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 56px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">AB Talks · 60-Day Claude AI Mastery Challenge</div>
+    <h1>Sixty Days of Building.<br/>One Shipped Product.</h1>
+    <p class="sub">From AI fundamentals to a deployed, AI-powered timetable automation system — how each week of the challenge became a capability used in the final capstone.</p>
+  </header>
+
+  <div class="grid-signature">
+    <table>
+      <thead>
+        <tr>
+          <th>Weeks</th>
+          <th>Foundations</th>
+          <th>Applied Skill</th>
+          <th>Systems &amp; Agents</th>
+          <th>Capstone Application</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1–2</td>
+          <td class="cell-fill"><div class="cell-title">AI Foundations</div><div class="cell-sub">Model behavior, capabilities, limits</div></td>
+          <td></td><td></td>
+          <td><div class="cell-sub">Judged AI vs. rule-based tradeoffs before writing any code</div></td>
+        </tr>
+        <tr>
+          <td>3–4</td>
+          <td class="cell-fill"><div class="cell-title">Effective Prompting</div><div class="cell-sub">Precision, structure, iteration</div></td>
+          <td class="cell-fill"><div class="cell-title">Reasoning Workflows</div><div class="cell-sub">Breaking problems into steps</div></td>
+          <td></td>
+          <td><div class="cell-sub">Designed the agent's strict JSON-only parsing prompt</div></td>
+        </tr>
+        <tr>
+          <td>5–6</td>
+          <td></td>
+          <td class="cell-fill"><div class="cell-title">Research Workflows</div><div class="cell-sub">Evaluating tools &amp; tradeoffs</div></td>
+          <td class="cell-fill"><div class="cell-title">Automation</div><div class="cell-sub">Scripting repeatable tasks</div></td>
+          <td><div class="cell-sub">Diagnosed &amp; resolved the Gemini quota issue by evaluating Groq as an alternative</div></td>
+        </tr>
+        <tr>
+          <td>7–8</td>
+          <td></td>
+          <td class="cell-fill"><div class="cell-title">Product Thinking</div><div class="cell-sub">Scoping, prioritization, tradeoffs</div></td>
+          <td class="cell-fill"><div class="cell-title">Multimodal &amp; Knowledge Systems</div><div class="cell-sub">Structured data + retrieval</div></td>
+          <td><div class="cell-sub">Cut Day 1 scope to one hero feature; designed the relational schema</div></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td></td><td></td>
+          <td class="cell-fill"><div class="cell-title">Autonomous Agent Architecture</div><div class="cell-sub">Parse → validate → act → confirm</div></td>
+          <td><div class="cell-sub">Built the AI Reassignment Agent's human-confirmed pipeline</div></td>
+        </tr>
+        <tr class="cell-capstone">
+          <td>10</td>
+          <td colspan="3"><div class="cell-title">10-Day Capstone Sprint</div><div class="cell-sub">Requirements → Design → Build → QA → Deploy</div></td>
+          <td><div class="cell-title">Smart Timetable Automator v1.0.0</div><div class="cell-sub">Deployed, tested, documented, shipped</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Skills That Converged</h2>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="icon">🧠</div><div class="name">AI Foundations</div><div class="desc">Understanding what LLMs are good at — and where deterministic code is the safer, correct choice.</div></div>
+    <div class="skill-card"><div class="icon">✍️</div><div class="name">Effective Prompting</div><div class="desc">Designing a strict, JSON-only system prompt for the reassignment agent's parsing stage.</div></div>
+    <div class="skill-card"><div class="icon">🔍</div><div class="name">Research &amp; Evaluation</div><div class="desc">Diagnosing a real API quota failure and evaluating Groq as a working alternative, mid-build.</div></div>
+    <div class="skill-card"><div class="icon">⚙️</div><div class="name">Automation</div><div class="desc">A rule-based generation engine with backtracking — automation applied to a genuine constraint problem.</div></div>
+    <div class="skill-card"><div class="icon">🎯</div><div class="name">Product Thinking</div><div class="desc">Cutting Day 1's ambition to one shippable hero feature, and holding that line for nine more days.</div></div>
+    <div class="skill-card"><div class="icon">🤖</div><div class="name">Agentic Systems</div><div class="desc">A parse → validate → propose → confirm pipeline where AI never writes data directly.</div></div>
+    <div class="skill-card"><div class="icon">🗂️</div><div class="name">Knowledge Systems</div><div class="desc">A relational schema (7 tables) modeling faculty, subjects, sections, and constraints correctly.</div></div>
+    <div class="skill-card"><div class="icon">🐞</div><div class="name">Debugging Under Ambiguity</div><div class="desc">Found and fixed a race condition, a silent RLS failure, and an LLM-variance bug — each with a distinct root cause.</div></div>
+    <div class="skill-card"><div class="icon">🚀</div><div class="name">Shipping</div><div class="desc">Security review, accessibility pass, and public deployment — a real v1.0.0, not a demo.</div></div>
+  </div>
+
+  <div class="capstone-panel">
+    <h2>The Capstone, By the Numbers</h2>
+    <p style="color:var(--muted); max-width:640px; line-height:1.6;">
+      Ten days. One department's real timetabling problem, solved end-to-end — from a blank-slate interview to a deployed, AI-assisted application.
+    </p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">168</div><div class="label">Lectures / Week Scheduled</div></div>
+      <div class="stat"><div class="num">0</div><div class="label">Scheduling Clashes</div></div>
+      <div class="stat"><div class="num">6</div><div class="label">Sections Generated At Once</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Real Bugs Diagnosed &amp; Fixed</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Mid-Build AI Provider Pivot</div></div>
+      <div class="stat"><div class="num">10</div><div class="label">Days, Start to Deployed</div></div>
+    </div>
+  </div>
+
+  <footer>Smart Timetable Automator &middot; Built by Dhaneshwar Kumar &middot; AB Talks 60-Day Claude AI Mastery Challenge</footer>
+</div>
+</body>
+</html>
